@@ -85,12 +85,12 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public List<NearAttractionDTO> getNearByAttractions(VisitedLocation visitedLocation) {
+	public List<NearAttractionDTO> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<Attraction> attractions = gpsUtil.getAttractions();
 		List<NearAttractionDTO> nearAttractionDTOS = new ArrayList<>();
 
 		for (Attraction attraction : attractions) {
-			nearAttractionDTOS.add(createNearAttractionDTO(visitedLocation, attraction));
+			nearAttractionDTOS.add(createNearAttractionDTO(visitedLocation, attraction, user));
 		}
 
         return nearAttractionDTOS.stream()
@@ -99,7 +99,7 @@ public class TourGuideService {
 				.toList();
 	}
 
-	private NearAttractionDTO createNearAttractionDTO(VisitedLocation visitedLocation, Attraction attraction) {
+	private NearAttractionDTO createNearAttractionDTO(VisitedLocation visitedLocation, Attraction attraction, User user) {
 
         return NearAttractionDTO.builder()
 				.attractionName(attraction.attractionName)
@@ -108,7 +108,7 @@ public class TourGuideService {
 				.userLocationLatitude(visitedLocation.location.latitude)
 				.userLocationLongitude(visitedLocation.location.longitude)
 				.distance(rewardsService.getDistance(visitedLocation.location, attraction))
-				.rewardPoints(0) // TODO : RewardPoint must be implemented
+				.rewardPoints(rewardsService.getRewardPoints(attraction, user))
 				.build();
 	}
 

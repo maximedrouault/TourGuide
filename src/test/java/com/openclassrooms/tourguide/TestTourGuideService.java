@@ -101,7 +101,7 @@ public class TestTourGuideService {
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
-		List<NearAttractionDTO> attractions = tourGuideService.getNearByAttractions(visitedLocation);
+		List<NearAttractionDTO> attractions = tourGuideService.getNearByAttractions(visitedLocation, user);
 
 		tourGuideService.tracker.stopTracking();
 
