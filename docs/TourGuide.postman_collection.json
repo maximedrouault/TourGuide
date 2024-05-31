@@ -1,0 +1,104 @@
+{
+	"info": {
+		"_postman_id": "c03d715d-b55f-4596-bf77-98ace8519171",
+		"name": "TourGuide",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27069653"
+	},
+	"item": [
+		{
+			"name": "getNearbyAttractions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/getNearbyAttractions?userName=internalUser0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"getNearbyAttractions"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "internalUser0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getLocation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/getLocation?userName=internalUser0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"getLocation"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "internalUser0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTripDeals",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/getTripDeals?userName=internalUser0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"getTripDeals"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "internalUser0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
