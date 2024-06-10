@@ -18,6 +18,9 @@ import tripPricer.TripPricer;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
 @Service
@@ -29,6 +32,10 @@ public class TourGuideService {
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
+
+	// Multi-threading executor for trackUserLocation
+	private final ExecutorService executorService = Executors.newFixedThreadPool(10000);
+
 
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
@@ -82,7 +89,17 @@ public class TourGuideService {
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
+
 		return visitedLocation;
+	}
+
+	public CompletableFuture<VisitedLocation> proxyTrackUserLocation(User user) {
+		return CompletableFuture.supplyAsync(() -> trackUserLocation(user), executorService)
+				.exceptionally(exception -> {
+					logger.error("Error tracking user location");
+
+					return null;
+				});
 	}
 
 	public List<NearAttractionDTO> getNearByAttractions(VisitedLocation visitedLocation, User user) {
