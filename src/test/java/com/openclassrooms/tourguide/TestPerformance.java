@@ -61,7 +61,7 @@ public class TestPerformance {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		for (User user : allUsers) {
-			CompletableFuture<VisitedLocation> futureVisitedLocation = tourGuideService.proxyTrackUserLocation(user);
+			CompletableFuture<VisitedLocation> futureVisitedLocation = tourGuideService.trackUserLocation(user);
 			futureVisitedLocations.add(futureVisitedLocation);
 		}
 

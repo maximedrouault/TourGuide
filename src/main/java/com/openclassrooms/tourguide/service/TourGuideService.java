@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
@@ -57,9 +58,9 @@ public class TourGuideService {
 		return user.getUserRewards();
 	}
 
-	public VisitedLocation getUserLocation(User user) {
+	public VisitedLocation getUserLocation(User user) throws ExecutionException, InterruptedException {
         return (!user.getVisitedLocations().isEmpty()) ? user.getLastVisitedLocation()
-				: trackUserLocation(user);
+				: trackUserLocation(user).get();
 	}
 
 	public User getUser(String userName) {
@@ -85,21 +86,19 @@ public class TourGuideService {
 		return providers;
 	}
 
-	public VisitedLocation trackUserLocation(User user) {
-		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
+	public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
+		return CompletableFuture.supplyAsync(() -> {
+			VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+			user.addToVisitedLocations(visitedLocation);
+			rewardsService.calculateRewards(user);
 
-		return visitedLocation;
-	}
-
-	public CompletableFuture<VisitedLocation> proxyTrackUserLocation(User user) {
-		return CompletableFuture.supplyAsync(() -> trackUserLocation(user), executorService)
+			return visitedLocation;
+		}, executorService)
 				.exceptionally(exception -> {
-					logger.error("Error tracking user location");
+                    logger.error("Error tracking user location for user: {}", user.getUserName());
 
-					return null;
-				});
+                    return null;
+                });
 	}
 
 	public List<NearAttractionDTO> getNearByAttractions(VisitedLocation visitedLocation, User user) {
