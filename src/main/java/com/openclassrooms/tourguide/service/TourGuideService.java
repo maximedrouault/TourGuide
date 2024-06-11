@@ -87,18 +87,18 @@ public class TourGuideService {
 	}
 
 	public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
-		return CompletableFuture.supplyAsync(() -> {
-			VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-			user.addToVisitedLocations(visitedLocation);
-			rewardsService.calculateRewards(user);
+		return CompletableFuture.supplyAsync(() -> gpsUtil.getUserLocation(user.getUserId()), executorService)
+				.thenApply(visitedLocation -> {
+					user.addToVisitedLocations(visitedLocation);
+					rewardsService.calculateRewards(user);
 
-			return visitedLocation;
-		}, executorService)
+					return visitedLocation;
+				})
 				.exceptionally(exception -> {
-                    logger.error("Error tracking user location for user: {}", user.getUserName());
+					logger.error("Error tracking user location for user: {}", user.getUserName());
 
-                    return null;
-                });
+					return null;
+				});
 	}
 
 	public List<NearAttractionDTO> getNearByAttractions(VisitedLocation visitedLocation, User user) {
