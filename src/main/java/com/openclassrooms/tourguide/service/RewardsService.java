@@ -7,6 +7,8 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import rewardCentral.RewardCentral;
 
@@ -26,6 +28,7 @@ public class RewardsService {
     private int proximityBuffer = defaultProximityBuffer;
     private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
+	private final Logger logger = LoggerFactory.getLogger(RewardsService.class);
 
 	private final ExecutorService executorService = Executors.newFixedThreadPool(10000);
 
@@ -37,25 +40,30 @@ public class RewardsService {
 
 	public CompletableFuture<Void> calculateRewards(User user) {
 		return CompletableFuture.runAsync(() -> {
-			List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
-			List<Attraction> attractions = gpsUtil.getAttractions();
-			List<UserReward> userRewards = new CopyOnWriteArrayList<>(user.getUserRewards());
+					List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
+					List<Attraction> attractions = gpsUtil.getAttractions();
+					List<UserReward> userRewards = new CopyOnWriteArrayList<>(user.getUserRewards());
 
-			for (VisitedLocation visitedLocation : userLocations) {
-				for (Attraction attraction : attractions) {
-					boolean alreadyRewarded = userRewards.parallelStream()
-							.anyMatch(userReward -> userReward.attraction.attractionName.equals(attraction.attractionName));
+					for (VisitedLocation visitedLocation : userLocations) {
+						for (Attraction attraction : attractions) {
+							boolean alreadyRewarded = userRewards.parallelStream()
+									.anyMatch(userReward -> userReward.attraction.attractionName.equals(attraction.attractionName));
 
-					if (!alreadyRewarded) {
-						if (nearAttraction(visitedLocation, attraction)) {
-							userRewards.add(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+							if (!alreadyRewarded) {
+								if (nearAttraction(visitedLocation, attraction)) {
+									userRewards.add(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+								}
+							}
 						}
 					}
-				}
-			}
 
-			user.setUserRewards(userRewards);
-		}, executorService);
+					user.setUserRewards(userRewards);
+				}, executorService)
+				.exceptionally(exception -> {
+					logger.error("Error calculating rewards for user: {}", user.getUserName());
+
+					return null;
+				});
 	}
 
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {

@@ -88,15 +88,14 @@ public class TourGuideService {
 
 	public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
 		return CompletableFuture.supplyAsync(() -> gpsUtil.getUserLocation(user.getUserId()), executorService)
-				.thenApply(visitedLocation -> {
+				.thenCompose(visitedLocation -> {
 					user.addToVisitedLocations(visitedLocation);
-					rewardsService.calculateRewards(user);
+					CompletableFuture<Void> futureReward = rewardsService.calculateRewards(user);
 
-					return visitedLocation;
+					return futureReward.thenApply(aVoid -> visitedLocation);
 				})
 				.exceptionally(exception -> {
 					logger.error("Error tracking user location for user: {}", user.getUserName());
-
 					return null;
 				});
 	}
