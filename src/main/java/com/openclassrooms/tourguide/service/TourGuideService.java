@@ -35,7 +35,7 @@ public class TourGuideService {
 	boolean testMode = true;
 
 	// Multi-threading executor for trackUserLocation
-	private final ExecutorService executorService = Executors.newFixedThreadPool(10000);
+	private final ExecutorService executorService = Executors.newFixedThreadPool(500);
 
 
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {

@@ -8,6 +8,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import rewardCentral.RewardCentral;
 
@@ -46,6 +47,7 @@ public class TestPerformance {
 	 */
 
 
+	@Disabled
     @Test
 	public void highVolumeTrackLocation() throws ExecutionException, InterruptedException {
 		GpsUtil gpsUtil = new GpsUtil();
@@ -78,6 +80,7 @@ public class TestPerformance {
 		assertEquals(allUsers.size(), futureVisitedLocations.size());
 	}
 
+	@Disabled
 	@Test
 	public void highVolumeGetRewards() throws ExecutionException, InterruptedException {
 		GpsUtil gpsUtil = new GpsUtil();

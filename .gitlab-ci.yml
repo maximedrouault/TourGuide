@@ -1,0 +1,59 @@
+stages:
+  - build
+  - test
+  - package
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  DOCKER_IMAGE_BUILT: "$DOCKERHUB_USERNAME/tourguide"
+  ENVIRONMENT_IMAGE: "eclipse-temurin:17-jdk-alpine"
+
+  #EXTERNAL_LIBRARIES
+  GPSUTIL: "-Dfile=libs/gpsUtil.jar -DgroupId=gpsUtil -DartifactId=gpsUtil -Dversion=1.0.0 -Dpackaging=jar"
+  REWARDCENTRAL: "-Dfile=libs/RewardCentral.jar -DgroupId=rewardCentral -DartifactId=rewardCentral -Dversion=1.0.0 -Dpackaging=jar"
+  TRIPPRICER: "-Dfile=libs/TripPricer.jar -DgroupId=tripPricer -DartifactId=tripPricer -Dversion=1.0.0 -Dpackaging=jar"
+
+cache:
+  paths:
+    - .m2/repository
+  key: "$CI_JOB_NAME"
+
+.install_dependencies: &install_dependencies
+  - apk add maven
+  - mvn install:install-file $GPSUTIL
+  - mvn install:install-file $REWARDCENTRAL
+  - mvn install:install-file $TRIPPRICER
+
+build_job:
+  stage: build
+  image: $ENVIRONMENT_IMAGE
+  before_script: *install_dependencies
+  script:
+    - mvn clean compile --batch-mode --fail-at-end
+
+test_job:
+  stage: test
+  image: $ENVIRONMENT_IMAGE
+  before_script: *install_dependencies
+  script:
+    - mvn clean test --batch-mode --fail-at-end
+
+package_job:
+  stage: package
+  image: $ENVIRONMENT_IMAGE
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+  before_script:
+    - *install_dependencies
+    - apk add --no-cache docker-cli-compose
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - mvn clean package --batch-mode --fail-at-end
+    - cp target/*.jar .
+    - docker build -t $DOCKER_IMAGE_BUILT .
+    - docker push $DOCKER_IMAGE_BUILT
+  artifacts:
+    paths:
+      - "*.jar"
