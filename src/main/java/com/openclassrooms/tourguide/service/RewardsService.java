@@ -23,7 +23,7 @@ public class RewardsService {
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
 	// proximity in miles
-    private final int defaultProximityBuffer = 10;
+    private static final int defaultProximityBuffer = 10;
 	@Setter
     private int proximityBuffer = defaultProximityBuffer;
     private final GpsUtil gpsUtil;
@@ -68,11 +68,11 @@ public class RewardsService {
 
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
         int attractionProximityRange = 200;
-        return !(getDistance(attraction, location) > attractionProximityRange);
+        return (getDistance(attraction, location) <= attractionProximityRange);
 	}
 	
 	private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
-		return !(getDistance(attraction, visitedLocation.location) > proximityBuffer);
+		return (getDistance(attraction, visitedLocation.location) <= proximityBuffer);
 	}
 	
 	public int getRewardPoints(Attraction attraction, User user) {
