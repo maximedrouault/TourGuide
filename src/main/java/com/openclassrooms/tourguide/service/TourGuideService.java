@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -102,16 +103,19 @@ public class TourGuideService {
 
 	public List<NearAttractionDTO> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<Attraction> attractions = gpsUtil.getAttractions();
-		List<NearAttractionDTO> nearAttractionDTOS = new ArrayList<>();
 
-		for (Attraction attraction : attractions) {
-			nearAttractionDTOS.add(createNearAttractionDTO(visitedLocation, attraction, user));
-		}
+		List<CompletableFuture<NearAttractionDTO>> futureNearAttractionDTOS = attractions.parallelStream()
+				.map(attraction -> CompletableFuture.supplyAsync(() ->
+						createNearAttractionDTO(visitedLocation, attraction, user), executorService))
+				.toList();
 
-        return nearAttractionDTOS.stream()
+		CompletableFuture.allOf(futureNearAttractionDTOS.toArray(new CompletableFuture[0])).join();
+
+		return futureNearAttractionDTOS.parallelStream()
+				.map(CompletableFuture::join)
 				.sorted(Comparator.comparingDouble(NearAttractionDTO::getDistance))
 				.limit(5)
-				.toList();
+				.collect(Collectors.toList());
 	}
 
 	private NearAttractionDTO createNearAttractionDTO(VisitedLocation visitedLocation, Attraction attraction, User user) {
