@@ -1,5 +1,5 @@
 
-name: Java CI with Maven for Tourguide application
+name: CI pipeline for Tourguide application
 
 on:
   push:
@@ -31,8 +31,7 @@ jobs:
           cache: maven
 
       - name: Install external dependencies
-        run: |
-          echo "${{ env.EXTERNAL_DEPENDENCIES }}"
+        run: ${{ env.EXTERNAL_DEPENDENCIES }}
 
       - name: Build with Maven
         run: mvn -B clean compile
@@ -52,8 +51,7 @@ jobs:
           cache: maven
 
       - name: Install external dependencies
-        run: |
-          echo "${{ env.EXTERNAL_DEPENDENCIES }}"
+        run: ${{ env.EXTERNAL_DEPENDENCIES }}
 
       - name: Build with Maven and execute tests
         run: mvn -B clean test
@@ -73,8 +71,7 @@ jobs:
           cache: maven
 
       - name: Install external dependencies
-        run: |
-          echo "${{ env.EXTERNAL_DEPENDENCIES }}"
+        run: ${{ env.EXTERNAL_DEPENDENCIES }}
 
       - name: Build with Maven, execute tests and package
         run: mvn -B clean package
