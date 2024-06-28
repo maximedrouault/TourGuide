@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>G:/Mon Drive/FORMATION/DEVELOPPEMENT JAVA/P8/TourGuide/src/main/java/com/openclassrooms/tourguide</OriginalElement>
+  <nodes>
+    <node x="-613.1856522619721" y="79.27636352657214">com.openclassrooms.tourguide.service.TourGuideService</node>
+    <node x="-537.6856522619721" y="606.5999600359476">com.openclassrooms.tourguide.TourGuideController</node>
+    <node x="-1104.555986772075" y="79.27636352657214">com.openclassrooms.tourguide.user.User</node>
+    <node x="-1062.555986772075" y="-201.83830560356193">com.openclassrooms.tourguide.user.UserReward</node>
+    <node x="-543.1758343522954" y="-189.83830560356193">com.openclassrooms.tourguide.service.RewardsService</node>
+    <node x="-1046.055986772075" y="570.0999600359476">com.openclassrooms.tourguide.user.UserPreferences</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.openclassrooms.tourguide.service.RewardsService" target="com.openclassrooms.tourguide.user.UserReward" relationship="CREATE">
+      <point x="-201.5" y="0.0" />
+      <point x="121.0" y="0.0" />
+    </edge>
+    <edge source="com.openclassrooms.tourguide.service.TourGuideService" target="com.openclassrooms.tourguide.user.User" relationship="TO_MANY">
+      <point x="-270.25373318035656" y="53.81058688776125" />
+      <point x="-695.57507074326" y="333.0869504143334" />
+      <point x="-695.57507074326" y="333.0869504143334" />
+      <point x="165.75444159850338" y="53.81058688776125" />
+    </edge>
+    <edge source="com.openclassrooms.tourguide.user.User" target="com.openclassrooms.tourguide.user.UserReward" relationship="TO_MANY">
+      <point x="0.0" y="-200.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="com.openclassrooms.tourguide.user.User" target="com.openclassrooms.tourguide.user.UserPreferences" relationship="CREATE">
+      <point x="15.0" y="200.0" />
+      <point x="15.0" y="-128.0" />
+    </edge>
+    <edge source="com.openclassrooms.tourguide.user.User" target="com.openclassrooms.tourguide.user.UserPreferences" relationship="TO_ONE">
+      <point x="0.0" y="200.0" />
+      <point x="0.0" y="-128.0" />
+    </edge>
+    <edge source="com.openclassrooms.tourguide.service.TourGuideService" target="com.openclassrooms.tourguide.user.User" relationship="CREATE">
+      <point x="-272.0" y="0.0" />
+      <point x="163.0" y="0.0" />
+    </edge>
+    <edge source="com.openclassrooms.tourguide.TourGuideController" target="com.openclassrooms.tourguide.service.TourGuideService" relationship="TO_ONE">
+      <point x="0.0" y="-91.5" />
+      <point x="0.0" y="200.0" />
+    </edge>
+    <edge source="com.openclassrooms.tourguide.service.TourGuideService" target="com.openclassrooms.tourguide.service.RewardsService" relationship="TO_ONE">
+      <point x="-0.4901820903232874" y="-200.0" />
+      <point x="0.0" y="92.0" />
+    </edge>
+  </edges>
+  <settings layout="Compact" zoom="0.8512869399428032" showDependencies="true" x="-685.2186918701002" y="314.49999999999966" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
